@@ -136,3 +136,17 @@ footer { padding: 30px 28px 28px; min-height: 94svh; background: var(--paper); d
 }
 
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .metal-fallback, .felix-record { animation: none; } }
+
+.project-media-study {
+  height: auto;
+  aspect-ratio: 8 / 5;
+  overflow: hidden;
+  background: #090909;
+}
+
+.project-media-study img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}

@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Where Copenhagen Pauses — Interactive Visual Study</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&display=swap");
+
+      :root {
+        color-scheme: dark;
+        --ink: #090909;
+        --paper: #f1eee6;
+        --acid: #d4ff2f;
+        --muted: #85837c;
+        --line: #363633;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        width: 100%;
+        min-height: 100%;
+        margin: 0;
+        background: var(--ink);
+        color: var(--paper);
+        font-family: "Geist", Arial, sans-serif;
+      }
+
+      body { overflow-x: hidden; }
+
+      button { font: inherit; }
+
+      .study {
+        width: 100%;
+        min-height: 100vh;
+        padding: clamp(24px, 4.4vw, 70px);
+        background: var(--ink);
+      }
+
+      .topline {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid var(--line);
+        color: var(--paper);
+        font-size: clamp(9px, 1vw, 15px);
+        letter-spacing: .16em;
+        text-transform: uppercase;
+      }
+
+      .topline span:first-child { color: var(--acid); }
+
+      .intro {
+        display: grid;
+        grid-template-columns: minmax(0, 1.55fr) minmax(250px, .45fr);
+        gap: 48px;
+        align-items: end;
+        margin: clamp(34px, 5vw, 72px) 0 clamp(42px, 5vw, 76px);
+      }
+
+      h1 {
+        margin: 0;
+        max-width: 950px;
+        font-size: clamp(54px, 8.2vw, 126px);
+        font-weight: 400;
+        line-height: .82;
+        letter-spacing: -.065em;
+      }
+
+      h1 em {
+        display: block;
+        color: var(--acid);
+        font-family: Georgia, "Times New Roman", serif;
+        font-weight: 400;
+      }
+
+      .intro-copy {
+        margin: 0 0 7px;
+        color: #bbb9b2;
+        font-size: clamp(13px, 1.25vw, 19px);
+        line-height: 1.45;
+      }
+
+      .chart-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 18px;
+      }
+
+      .chart-label, .note-label {
+        color: var(--muted);
+        font-size: clamp(9px, .9vw, 14px);
+        letter-spacing: .15em;
+        text-transform: uppercase;
+      }
+
+      .legend {
+        display: flex;
+        gap: 26px;
+        font-size: clamp(12px, 1.1vw, 17px);
+      }
+
+      .legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+      }
+
+      .legend i {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--paper);
+      }
+
+      .legend span:last-child i { background: var(--acid); }
+
+      .rows {
+        display: grid;
+        gap: clamp(15px, 2.3vw, 31px);
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: minmax(170px, 275px) 1fr 68px;
+        gap: clamp(14px, 2vw, 30px);
+        align-items: center;
+        width: 100%;
+        min-height: 54px;
+        padding: 5px 0;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        text-align: left;
+        cursor: pointer;
+        transition: opacity 220ms ease, transform 220ms ease;
+      }
+
+      .rows:has(.row.is-selected) .row:not(.is-selected) { opacity: .35; }
+      .row:hover, .row:focus-visible { transform: translateX(6px); }
+
+      .place {
+        font-size: clamp(16px, 1.7vw, 26px);
+        letter-spacing: -.02em;
+      }
+
+      .bar {
+        display: flex;
+        width: 100%;
+        height: clamp(24px, 3vw, 40px);
+        overflow: hidden;
+        border-radius: 999px;
+        background: #20201e;
+      }
+
+      .segment {
+        width: 0;
+        height: 100%;
+        transition: width 900ms cubic-bezier(.2, .75, .2, 1);
+      }
+
+      .moving { background: var(--paper); }
+      .staying { background: var(--acid); transition-delay: 120ms; }
+
+      .value {
+        color: var(--acid);
+        font-size: clamp(16px, 1.5vw, 23px);
+        font-weight: 600;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .detail {
+        display: grid;
+        grid-template-columns: 225px 1fr auto;
+        gap: 30px;
+        align-items: center;
+        min-height: 78px;
+        margin-top: clamp(28px, 4vw, 58px);
+        padding-top: 24px;
+        border-top: 1px solid var(--line);
+      }
+
+      #detailText {
+        margin: 0;
+        font-size: clamp(14px, 1.35vw, 21px);
+        line-height: 1.4;
+      }
+
+      .replay {
+        padding: 11px 16px;
+        border: 1px solid #5b5b56;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--paper);
+        cursor: pointer;
+        transition: border-color 180ms ease, color 180ms ease;
+      }
+
+      .replay:hover, .replay:focus-visible {
+        border-color: var(--acid);
+        color: var(--acid);
+      }
+
+      .footnote {
+        display: flex;
+        justify-content: space-between;
+        gap: 30px;
+        margin-top: 24px;
+        color: var(--muted);
+        font-size: clamp(9px, .85vw, 13px);
+        line-height: 1.45;
+      }
+
+      .footnote span:last-child {
+        flex: 0 0 auto;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+      }
+
+      @media (max-width: 720px) {
+        .study { min-height: auto; }
+        .intro { grid-template-columns: 1fr; gap: 24px; }
+        .chart-head { align-items: flex-start; flex-direction: column; }
+        .row { grid-template-columns: 1fr 52px; gap: 8px 12px; }
+        .place { grid-column: 1; }
+        .value { grid-column: 2; }
+        .bar { grid-column: 1 / -1; grid-row: 2; }
+        .detail { grid-template-columns: 1fr auto; }
+        .detail .note-label { grid-column: 1; }
+        #detailText { grid-column: 1 / -1; grid-row: 2; }
+        .replay { grid-column: 2; grid-row: 1; }
+        .footnote { flex-direction: column; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .segment, .row { transition-duration: 0ms; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="study">
+      <div class="topline">
+        <span>Visual study / 01</span>
+        <span>Copenhagen K · 2026</span>
+      </div>
+
+      <section class="intro">
+        <h1>Where Copenhagen <em>pauses.</em></h1>
+        <p class="intro-copy">How might public-space data be translated into a clear visual story?</p>
+      </section>
+
+      <section class="chart" aria-labelledby="chartTitle">
+        <div class="chart-head">
+          <span class="chart-label" id="chartTitle">Share of sample activity · click a location</span>
+          <div class="legend" aria-label="Legend">
+            <span><i aria-hidden="true"></i>Moving</span>
+            <span><i aria-hidden="true"></i>Staying</span>
+          </div>
+        </div>
+
+        <div class="rows">
+          <button class="row" type="button" data-moving="78" data-staying="22" data-detail="22% staying · An illustrative movement-led square.">
+            <span class="place">Kongens Nytorv</span>
+            <span class="bar" aria-hidden="true"><span class="segment moving"></span><span class="segment staying"></span></span>
+            <span class="value">22%</span>
+          </button>
+
+          <button class="row" type="button" data-moving="54" data-staying="46" data-detail="46% staying · An illustrative balance of movement and pause.">
+            <span class="place">Nyhavn</span>
+            <span class="bar" aria-hidden="true"><span class="segment moving"></span><span class="segment staying"></span></span>
+            <span class="value">46%</span>
+          </button>
+
+          <button class="row" type="button" data-moving="37" data-staying="63" data-detail="63% staying · An illustrative place shaped by seating, water and visible activity.">
+            <span class="place">Ofelia Plads</span>
+            <span class="bar" aria-hidden="true"><span class="segment moving"></span><span class="segment staying"></span></span>
+            <span class="value">63%</span>
+          </button>
+
+          <button class="row" type="button" data-moving="61" data-staying="39" data-detail="39% staying · An illustrative green pause within a connecting route.">
+            <span class="place">Sankt Annæ Plads</span>
+            <span class="bar" aria-hidden="true"><span class="segment moving"></span><span class="segment staying"></span></span>
+            <span class="value">39%</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="detail" aria-live="polite">
+        <span class="note-label">Selected location</span>
+        <p id="detailText">Select a location to replay its data and reveal the design hypothesis.</p>
+        <button class="replay" id="replay" type="button">Replay diagram</button>
+      </section>
+
+      <div class="footnote">
+        <span>Synthetic dataset created solely to demonstrate information design. Values are illustrative and do not represent field research or empirical findings.</span>
+        <span>Celine Sophie von Christierson</span>
+      </div>
+    </main>
+
+    <script>
+      const rows = [...document.querySelectorAll('.row')];
+      const detailText = document.getElementById('detailText');
+      const replayButton = document.getElementById('replay');
+
+      function setBar(row, animated = true) {
+        const moving = row.querySelector('.moving');
+        const staying = row.querySelector('.staying');
+
+        if (animated) {
+          moving.style.width = '0%';
+          staying.style.width = '0%';
+          void row.offsetWidth;
+        }
+
+        moving.style.width = `${row.dataset.moving}%`;
+        staying.style.width = `${row.dataset.staying}%`;
+      }
+
+      function replayAll() {
+        rows.forEach(row => {
+          row.classList.remove('is-selected');
+          row.querySelector('.moving').style.width = '0%';
+          row.querySelector('.staying').style.width = '0%';
+        });
+
+        detailText.textContent = 'Select a location to replay its data and reveal the design hypothesis.';
+        void document.body.offsetWidth;
+        rows.forEach((row, index) => window.setTimeout(() => setBar(row, false), index * 90));
+      }
+
+      rows.forEach(row => {
+        row.addEventListener('click', () => {
+          rows.forEach(item => item.classList.toggle('is-selected', item === row));
+          setBar(row);
+          detailText.textContent = `${row.querySelector('.place').textContent}: ${row.dataset.detail}`;
+        });
+      });
+
+      replayButton.addEventListener('click', replayAll);
+      window.addEventListener('load', replayAll);
+    </script>
+  </body>
+</html>
