@@ -27,3 +27,14 @@
 .project-copy h3{font-weight:400}.hero-kicker{letter-spacing:.16em}.section-heading{align-items:center}
 @media(max-width:760px){.project{padding-top:44px;padding-bottom:44px}.project-media{width:88%;--enter-x:30px}.project:nth-child(even) .project-media{--enter-x:-30px}#project-01 .project-media{width:70%;max-width:280px}#project-02 .project-media{width:88%}.project-media-study{width:100%;height:440px}.project-media.reveal-ready{transition-duration:1100ms,1500ms}.selection-count{margin-left:12px}.project-meta>span:first-child{font-size:16px}}
 @media(prefers-reduced-motion:reduce){.project-media.reveal-ready{opacity:1;transform:none;transition:none}}
+
+/* Selected single images: keep the artwork visible in its original proportions. */
+.project-media.curated-media{aspect-ratio:auto;background:transparent;overflow:hidden}
+.project-media.curated-media .selected-image{display:block;width:100%;height:auto;object-fit:contain}
+#project-03 .curated-media,#project-04 .curated-media{width:68%;max-width:330px}
+#project-02 .curated-media,#project-05 .curated-media{width:78%;max-width:420px}
+#project-01 .monkey-video,.xyz-monochrome{filter:grayscale(1)}
+@media(max-width:760px){
+  #project-03 .curated-media,#project-04 .curated-media{width:78%;max-width:300px}
+  #project-02 .curated-media,#project-05 .curated-media{width:88%;max-width:380px}
+}
