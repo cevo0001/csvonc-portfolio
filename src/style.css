@@ -33,7 +33,7 @@
 .project-media.curated-media .selected-image{display:block;width:100%;height:auto;object-fit:contain}
 #project-03 .curated-media,#project-04 .curated-media{width:68%;max-width:330px}
 #project-02 .curated-media,#project-05 .curated-media{width:78%;max-width:420px}
-#project-01 .monkey-video,.xyz-monochrome{filter:grayscale(1)}
+.xyz-monochrome{filter:grayscale(1)}
 @media(max-width:760px){
   #project-03 .curated-media,#project-04 .curated-media{width:78%;max-width:300px}
   #project-02 .curated-media,#project-05 .curated-media{width:88%;max-width:380px}
